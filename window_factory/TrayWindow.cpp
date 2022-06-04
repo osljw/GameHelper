@@ -4,8 +4,25 @@
 #include "../imgui_init.h"
 
 #include <strsafe.h>
+#include <commdlg.h>
+#include <filesystem>
 
 
+//std::wstring to_wstring(const std::string& str)
+//{
+//    using convert_typeX = std::codecvt_utf8<wchar_t>;
+//    std::wstring_convert<convert_typeX, wchar_t> converterX;
+//
+//    return converterX.from_bytes(str);
+//}
+//
+//std::string to_string(const std::wstring& wstr)
+//{
+//    using convert_typeX = std::codecvt_utf8<wchar_t>;
+//    std::wstring_convert<convert_typeX, wchar_t> converterX;
+//
+//    return converterX.to_bytes(wstr);
+//}
 
 TrayWindow::TrayWindow(HINSTANCE hInst): BaseWindow(hInst) {
     
@@ -19,15 +36,12 @@ bool TrayWindow::create()
     // WS_EX_TOOLWINDOW: hWnd窗口不在任务栏显示， 不显示在alt+tab列表中
     // WS_EX_LAYERED | WS_EX_TRANSPARENT: hWnd窗口透明和点击穿透
     hWnd = CreateWindowEx(
-        WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW,
+        //WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW,
+        WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_TOOLWINDOW,
         get_winclass().c_str(),
         NULL,
         WS_POPUP,
         0, 0, 0, 0,
-        //200, 200,600, 400,
-        //0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
-        //200, 200, height, width,
-        //GetSystemMetrics(SM_CXSCREEN)/2 - width/2, GetSystemMetrics(SM_CYSCREEN)/2 - height/2, width, height,
         nullptr, nullptr, hInstance, nullptr
     );
 
@@ -36,25 +50,6 @@ bool TrayWindow::create()
         std::cout << "CreateWindowEx Failed:" << GetLastError() << std::endl;
         return FALSE;
     }
-
-    //hWnd = CreateWindowEx(
-    //    //WS_EX_TOPMOST | WS_EX_TOOLWINDOW,
-    //    WS_EX_TOPMOST,
-    //    get_winclass().c_str(),
-    //    NULL,
-    //    WS_POPUP,
-    //    //0, 0, 0, 0,
-    //    200, 200, 600, 400,
-    //    nullptr, nullptr, hInstance, nullptr
-    //);
-
-    //if (!hWnd)
-    //{
-    //    std::cout << "CreateWindowEx Failed:" << GetLastError() << std::endl;
-    //    return FALSE;
-    //}
-
-    //BaseWindow::create();
 
     return true;
 }
@@ -85,12 +80,13 @@ bool TrayWindow::show() {
 
 extern bool show_demo_window;
 
+
+
 bool TrayWindow::render() {
     if (show_demo_window)
         ImGui::ShowDemoWindow(&show_demo_window);
 
-    static float x = 0.5f;
-    static float y = 0.5f;
+
 
     if (show_main_window) {
         static float f = 0.0f;
@@ -106,22 +102,11 @@ bool TrayWindow::render() {
         //ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
         ImGui::Checkbox("Another Window", &show_another_window);
 
-        bool pos_changed = false;
-        pos_changed |= ImGui::SliderFloat("x", &x, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-        pos_changed |= ImGui::SliderFloat("y", &y, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-        //ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
 
-        if (ImGui::Button(u8"居中")) {
-            x = 0.5f;
-            y = 0.5f;
-            pos_changed = true;
-        }
-        if (pos_changed) {
-            CrossHairWindow* crosshair_win = dynamic_cast<CrossHairWindow*>(WindowManager::GetWindow("crosshair"));
-            crosshair_win->set_position(x, y);
-        }
 
-        ImGui::Image((ImTextureID)my_texture_srv_gpu_handle.ptr, ImVec2((float)image_width, (float)image_height));
+        render_cursor_pos();
+        render_cursor_size();
+        render_image();
 
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -181,5 +166,157 @@ bool TrayWindow::render() {
 
 
 void TrayWindow::load() {
-    load_texture("crosshair.png", my_texture_srv_gpu_handle, image_width, image_height);
+    //std::string path = "resource\\crosshair.png";
+    //load_texture(path, 1, my_texture_srv_gpu_handle, image_width, image_height);
+    //images.emplace_back(path, 1, my_texture_srv_gpu_handle, image_width, image_height);
+
+    //for (int i = 0; i < 30; i++) {
+    //    load_texture(path, my_texture_srv_gpu_handle, image_width, image_height);
+    //    images.emplace_back(path, my_texture_srv_gpu_handle, image_width, image_height);
+    //}
+}
+
+void TrayWindow::render_cursor_pos() {
+    static float x = 0.5f;
+    static float y = 0.5f;
+
+    ImGui::NewLine();
+    ImGui::Text((char*)u8"光标位置");
+    ImGui::Separator();
+
+    bool pos_changed = false;
+    pos_changed |= ImGui::SliderFloat("x", &x, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::SameLine();
+    if (ImGui::Button((char*)u8"水平居中")) {
+        x = 0.5f;
+        pos_changed = true;
+    }
+
+    ImGui::NewLine();
+    pos_changed |= ImGui::SliderFloat("y", &y, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::SameLine();
+    if (ImGui::Button((char*)u8"垂直居中")) {
+        y = 0.5f;
+        pos_changed = true;
+    }
+
+    //ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
+
+
+    if (pos_changed) {
+        CrossHairWindow* crosshair_win = dynamic_cast<CrossHairWindow*>(WindowManager::GetWindow("crosshair"));
+        crosshair_win->set_position(x, y);
+    }
+}
+
+void TrayWindow::render_cursor_size() {
+    ImGui::NewLine();
+    ImGui::Text((char*)u8"光标大小");
+    ImGui::Separator();
+
+    static int x = 15;
+    static int y = 15;
+    static float xy = 1.0f;
+
+
+    bool size_changed = false;
+    size_changed |= ImGui::SliderInt("width", &x, 0, GetSystemMetrics(SM_CXSCREEN));
+    ImGui::SameLine();
+    if (ImGui::Button((char*)u8"宽度")) {
+        x = 15;
+        size_changed = true;
+    }
+
+    ImGui::NewLine();
+    size_changed |= ImGui::SliderInt("height", &y, 0, GetSystemMetrics(SM_CYSCREEN));            // Edit 1 float using a slider from 0.0f to 1.0f
+    ImGui::SameLine();
+    if (ImGui::Button((char*)u8"高度")) {
+        y = 15;
+        size_changed = true;
+    }
+
+    //ImGui::NewLine();
+    //if (ImGui::SliderFloat("scale", &xy, 0.0f, 1.0f)) {
+    //    x = GetSystemMetrics(SM_CXSCREEN) * xy;
+    //    y = GetSystemMetrics(SM_CYSCREEN) * xy;
+    //    size_changed = true;
+    //}
+    //ImGui::SameLine();
+    //if (ImGui::Button(u8"缩放")) {
+    //    x = 15;
+    //    y = 15;
+    //    size_changed = true;
+    //}
+
+    if (size_changed) {
+        CrossHairWindow* crosshair_win = dynamic_cast<CrossHairWindow*>(WindowManager::GetWindow("crosshair"));
+        crosshair_win->set_size(x, y);
+    }
+}
+
+void TrayWindow::render_image() {
+    ImGui::NewLine();
+    ImGui::Text((char*)u8"光标形状");
+    ImGui::Separator();
+
+    if (ImGui::Button((char*)u8"新增")) {
+        OPENFILENAME opfn;
+        ZeroMemory(&opfn, sizeof(OPENFILENAME));
+        opfn.lStructSize = sizeof(OPENFILENAME);
+        opfn.hwndOwner = hWnd;
+        //设置过滤  
+        //opfn.lpstrFilter = L"所有文件\0*.*\0文本文件\0*.txt\0MP3文件\0*.mp3\0";
+        opfn.lpstrFilter = L"图标文件\0*.png";
+        //默认过滤器索引设为1  
+        opfn.nFilterIndex = 1;
+        //文件名的字段必须先把第一个字符设为 \0  
+        WCHAR strFilename[MAX_PATH];//存放文件名
+        opfn.lpstrFile = strFilename;
+        opfn.lpstrFile[0] = '\0';
+        opfn.nMaxFile = sizeof(strFilename);
+        //设置标志位，检查目录或文件是否存在  
+        opfn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+        //opfn.lpstrInitialDir = NULL;  
+        // 显示对话框让用户选择文件  
+
+  
+        //初始化  
+        if (GetOpenFileName(&opfn))
+        {
+            ////在文本框中显示文件路径  
+            //HWND hEdt = GetDlgItem(hDlg, IDC_EDTFILENAME);
+            //SendMessage(hEdt, WM_SETTEXT, NULL, (LPARAM)strFilename);
+
+            std::wcout << "pick up file:" << strFilename << "," << std::filesystem::current_path() << std::endl;
+
+            //char filename[MAX_PATH * 2];
+            //WideCharToMultiByte(CP_ACP, 0, strFilename, -1, filename, MAX_PATH, NULL, NULL); //iSize =wcslen(pwsUnicode)+1=6
+            
+            std::string path = std::filesystem::path(strFilename).string();
+
+            ////std::string path(filename);
+            //int index = (int)images.size() + 1;
+            //load_texture(path, index, my_texture_srv_gpu_handle, image_width, image_height);
+            //images.emplace_back(path, index, my_texture_srv_gpu_handle, image_width, image_height);
+            //std::cout << "file name: " << path << std::endl;
+        }
+    }
+
+    int count = 1;
+    for (auto& img : images) {
+        //ImGui::Image((ImTextureID)img.my_texture_srv_gpu_handle.ptr, ImVec2((float)img.image_width, (float)img.image_height));
+        if (ImGui::ImageButton((ImTextureID)img.my_texture_srv_gpu_handle.ptr, ImVec2(32.0, 32.0))) {
+            //std::wstring wpath = to_wstring(img.path);
+
+            std::wstring wpath = std::filesystem::path(img.path).wstring();
+
+            CrossHairWindow* crosshair_win = dynamic_cast<CrossHairWindow*>(WindowManager::GetWindow("crosshair"));
+            crosshair_win->set_image(wpath);
+        }
+        if (count % 5 != 0) {
+            ImGui::SameLine();
+        }
+        count++;
+    }
+    ImGui::NewLine();
 }

@@ -1,10 +1,12 @@
 #pragma once
 
-#include "d3d_init.h"
 
-bool imgui_init(HWND hWnd);
-void imgui_render();
-void imgui_destroy();
+#include "d3d_backend/D3DBase.h"
+#include "imgui/imgui.h"
+
+
+
+#include <memory>
 
 class ImguiRender {
 public:
@@ -12,4 +14,16 @@ public:
 	static void End();
 };
 
-void load_texture(std::string filename, D3D12_GPU_DESCRIPTOR_HANDLE& my_texture_srv_gpu_handle, int& image_width, int& image_height);
+class ImguiInit {
+public:
+	ImguiInit(std::shared_ptr<D3DBase> p_d3d) : p_d3d(p_d3d) {
+		imgui_init();
+	}
+
+	bool imgui_init();
+	void imgui_render();
+	void imgui_destroy();
+
+	std::shared_ptr<D3DBase> p_d3d;
+};
+

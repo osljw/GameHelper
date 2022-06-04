@@ -1,19 +1,48 @@
 ﻿// GameHelper.cpp : 定义应用程序的入口点。
 //
 
+//#include "coroutine_test.h"
 
 #include "GameHelper.h"
 #include "Tray.h"
 #include "ResourceManager.h"
 #include "DebugConsole.h"
-#include "imgui_init.h"
+//#include "imgui_init.h"
 #include "window_factory/BaseWindow.h"
 #include "window_factory/CrossHairWindow.h"
 #include "window_factory/TrayWindow.h"
 #include "window_factory/WindowManager.h"
+#include "DesktopCapture.h"
+//#include "WindowCapture.h"
+
+#include "d3d_backend/ImGuiD3D11.h"
+#include "WGC.h"
+
+
+
+//#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#pragma comment(lib, "windowsapp")
 
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+
+//winrt::Windows::Foundation::IAsyncOperation<winrt::GraphicsCaptureItem> StartCaptureWithPickerAsync()
+//{
+//    auto item = co_await m_capturePicker.PickSingleItemAsync();
+//    if (item)
+//    {
+//        // We might resume on a different thread, so let's resume execution on the
+//        // main thread. This is important because SimpleCapture uses 
+//        // Direct3D11CaptureFramePool::Create, which requires the existence of
+//        // a DispatcherQueue. See CaptureSnapshot for an example that uses 
+//        // Direct3D11CaptureFramePool::CreateFreeThreaded, which doesn't now have this
+//        // requirement. See the README if you're unsure of which version of 'Create' to use.
+//        co_await m_mainThread;
+//        StartCaptureFromItem(item);
+//    }
+//
+//    co_return item;
+//}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -23,7 +52,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    //DebugConsole dc(true);
+    DebugConsole dc(true);
+
+    //std::cout << "caller  Coroutine::test begin, thread: " << std::this_thread::get_id() << std::endl;
+    //std::jthread out;
+    //resuming_on_new_thread(out);
+    //std::cout << "caller  Coroutine::test end, thread: " << std::this_thread::get_id() << std::endl;
 
     //WCHAR* winclass = ResourceManager::GetString(IDC_GAMEHELPER);
 
@@ -64,25 +98,42 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     WindowManager::RegisterWindow("crosshair", &crosshair_win);
     WindowManager::RegisterWindow("tray", &tray_win);
 
-    //HWND hWnd = tray_win.get_hwnd();
-    //Tray tray(hInstance, hWnd);
+
+    //WindowCapture wc(hInstance);
+    //wc.init();
+    //wc.create();
+    //wc.show();
 
     //HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMEHELPER));
 
     // imgui 绑定到托盘窗口
-    imgui_init(tray_win.get_hwnd());
+    ImGuiD3D11 imgui_manager(tray_win.get_hwnd());
+    imgui_manager.Init();
+
     tray_win.load();
 
+    std::cout << "main======= thread id: " << std::this_thread::get_id() << std::endl;
+
+    //DesktopCapture desk_cap;
+    WGC wgc;
+    HWND src_hWnd = FindWindow(NULL, _T("Steam"));
+    wgc.init(src_hWnd);
+
+
+    int count = 0;
     // Main loop
     bool done = false;
     while (!done)
     {
+        
+        
+
         // Poll and handle messages (inputs, window resize, etc.)
         // See the WndProc() function below for our to dispatch events to the Win32 backend.
         MSG msg;
         while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
-            //std::cout << "msg: " << msg.message << std::endl;
+            //std::cout << "all ======== msg: " << msg.message << ", " << std::hex << msg.message << std::endl;
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
             if (msg.message == WM_QUIT)
@@ -91,18 +142,36 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if (done)
             break;
 
+        //MSG msg = {};
+        //while (GetMessageW(&msg, nullptr, 0, 0))
+        //{
+        //    TranslateMessage(&msg);
+        //    DispatchMessageW(&msg);
+        //}
+
+        imgui_manager.Begin();
+
+        count++;
+        //if (count % 10000 == 0) wc.take_photo(L"E:\\workspace\\ce\\test.bmp");
+
         //std::cout << "========= imgui_render ========= " << done << std::endl;
 
         // Start the Dear ImGui frame
         //imgui_render();
-        ImguiRender::Begin();
+        //ImguiRender::Begin();
+        
 
-        tray_win.render();
+        //tray_win.render();
+        //desk_cap.render();
+        wgc.render();
 
-        ImguiRender::End();
+        imgui_manager.End();
+
+        //wgc.d3d11Texture->Release();
+        //if (wgc.d3d11SRV) wgc.d3d11SRV->Release();
     }
 
-    imgui_destroy();
+    imgui_manager.Destroy();
 
 
     return 0;

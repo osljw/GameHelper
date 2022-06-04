@@ -94,7 +94,7 @@ LRESULT BaseWindownWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
     if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
         return true;
 
-    std::cout << "after msg: " << message << ", lparam: " << lParam << std::endl;
+    //std::cout << "after msg: " << message << ", lparam: " << lParam << std::endl;
     
 
     switch (message)

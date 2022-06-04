@@ -1,5 +1,6 @@
 #include "CrossHairWindow.h"
 
+#include <filesystem>
 
 #pragma comment(lib, "gdiplus.lib")
 
@@ -9,35 +10,60 @@ ULONG_PTR gdiplusStartupToken;
 CrossHairWindow::CrossHairWindow(HINSTANCE hInstance) : BaseWindow(hInstance){
     Gdiplus::GdiplusStartupInput gdiInput;
     Gdiplus::GdiplusStartup(&gdiplusStartupToken, &gdiInput, NULL);
+
+    workdir = std::filesystem::current_path();
 }
 
 CrossHairWindow::~CrossHairWindow() {
     Gdiplus::GdiplusShutdown(gdiplusStartupToken);
 }
 
+BOOL FileExists(LPCTSTR szPath)
+{
+    DWORD dwAttrib = GetFileAttributes(szPath);
+
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+        !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
 Gdiplus::Image* CrossHairWindow::load_image(std::wstring img_path) {
     // 加载crsoss hair 图片;
-     Gdiplus::Image* imageptr = Gdiplus::Image::FromFile(img_path.c_str());
-    return imageptr;
+
+    std::filesystem::current_path(workdir);
+    image = Gdiplus::Image::FromFile(img_path.c_str());
+    std::wcout << img_path << "," << FileExists(img_path.c_str()) << std::filesystem::current_path() << " img width:" << image->GetHeight() << ", " << image->GetWidth() << std::endl;
+    if (image == nullptr) {
+        std::wcout << "load image failed, img path: " << img_path << std::endl;
+        return nullptr;
+    }
+
+    return image;
 }
 
 bool CrossHairWindow::show() {
     std::wstring img_path = L"resource\\crosshair.png";
 
-    image = load_image(img_path);
-    if (image == nullptr) {
-        std::wcout << "load image failed, img path: " << img_path << std::endl;
-        return false;
-    }
+    load_image(img_path);
 
-    int height = image->GetHeight();
-    int width = image->GetWidth();
-    int left = GetSystemMetrics(SM_CXSCREEN) / 2 - width / 2;
-    int top = GetSystemMetrics(SM_CYSCREEN) / 2 - height / 2;
+    width = image->GetWidth();
+    height = image->GetHeight();
+    center_x = GetSystemMetrics(SM_CXSCREEN) / 2;
+    center_y = GetSystemMetrics(SM_CYSCREEN) / 2;
+
+    update();
+
+    return true;
+}
+
+bool CrossHairWindow::update() {
+    //int height = image->GetHeight() * scale_x;
+    //int width = image->GetWidth() * scale_y;
+    int left = center_x - width / 2;
+    int top = center_y - height / 2;
 
     SetWindowPos(get_hwnd(), HWND_TOPMOST, left, top, width, height, SWP_SHOWWINDOW);
 
-    //// 窗口大小
+    // 窗口大小
     RECT wndRect;
     ::GetWindowRect(get_hwnd(), &wndRect);
     SIZE wndSize = {
@@ -46,14 +72,12 @@ bool CrossHairWindow::show() {
     };
 
     HDC hdc = GetDC(NULL);
-    //HBITMAP memBitmap = ::CreateCompatibleBitmap(hdc, wndSize.cx, wndSize.cy);
+    HDC memDC = ::CreateCompatibleDC(NULL);
     HBITMAP memBitmap = ::CreateCompatibleBitmap(hdc, width, height);
 
-    HDC memDC = ::CreateCompatibleDC(NULL);
     HGDIOBJ original = SelectObject(memDC, memBitmap);
 
     Gdiplus::Graphics graphics(memDC);
-    //graphics.DrawImage(image, 0, 0, wndSize.cx, wndSize.cy);
     graphics.DrawImage(image, 0, 0, width, height);
 
     BLENDFUNCTION blend = { 0 };
@@ -61,16 +85,14 @@ bool CrossHairWindow::show() {
     blend.SourceConstantAlpha = 255;
     blend.AlphaFormat = AC_SRC_ALPHA;
 
-
-    POINT srcPos = {left, top};
-    //SIZE sizeWnd = { wndSize.cx, wndSize.cy };
+    POINT srcPos = { left, top };
     SIZE sizeWnd = { width, height };
     POINT dstPos = { 0, 0 };
 
-    //bool ret = UpdateLayeredWindow(hWnd, hdc, &ptLocation, &szWnd, memdc, &ptSrc, 0, &blend, ULW_ALPHA);
+    // memDC -> hdc
     bool ret = UpdateLayeredWindow(get_hwnd(), hdc, &srcPos, &sizeWnd, memDC, &dstPos, 0, &blend, ULW_ALPHA);
     if (!ret) {
-        std::cout << "UpdateLayeredWindow failed" << std::endl;
+        std::cout << "UpdateLayeredWindow failed: " << width << "," << height << std::endl;
         return ret;
     }
 
@@ -79,10 +101,26 @@ bool CrossHairWindow::show() {
 
 void CrossHairWindow::set_position(float x, float y)
 {
-    int height = image->GetHeight();
-    int width = image->GetWidth();
-    int left = GetSystemMetrics(SM_CXSCREEN) * x - width/2;
-    int top = GetSystemMetrics(SM_CYSCREEN) * y - height/2;
+    center_x = GetSystemMetrics(SM_CXSCREEN) * x;
+    center_y = GetSystemMetrics(SM_CYSCREEN) * y;
 
-    SetWindowPos(get_hwnd(), HWND_TOPMOST, left, top, width, height, SWP_SHOWWINDOW);
+    update();
+}
+
+void CrossHairWindow::set_size(int x, int y)
+{
+    width = x;
+    height = y;
+
+    update();
+}
+
+void CrossHairWindow::set_image(std::wstring img_path)
+{
+    if (image) {
+        delete image;
+    }
+    std::wcout << "load img:" << img_path << std::endl;
+    load_image(img_path);
+    update();
 }

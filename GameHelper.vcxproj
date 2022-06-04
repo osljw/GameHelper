@@ -23,7 +23,7 @@
     <ProjectGuid>{7C805137-4C58-40E9-BD25-53E1FCE78ED1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GameHelper</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -104,6 +104,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,6 +140,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,9 +154,15 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="d3d_backend\D3DBase.h" />
+    <ClInclude Include="d3d_backend\ImGuiD3D11.h" />
+    <ClInclude Include="DesktopCapture.h" />
+    <ClInclude Include="image_loader.h" />
+    <ClInclude Include="imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="WGC.h" />
     <ClInclude Include="window_factory\WindowManager.h" />
     <ClInclude Include="window_factory\CrossHairWindow.h" />
-    <ClInclude Include="d3d_init.h" />
+    <ClInclude Include="d3d_backend\d3d12_init.h" />
     <ClInclude Include="DebugConsole.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="GameHelper.h" />
@@ -175,10 +185,16 @@
     <ClInclude Include="window_factory\TrayWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="d3d_backend\D3DBase.cpp" />
+    <ClCompile Include="d3d_backend\ImGuiD3D11.cpp" />
+    <ClCompile Include="DesktopCapture.cpp" />
+    <ClCompile Include="image_loader.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="WGC.cpp" />
     <ClCompile Include="window_factory\WindowManager.cpp" />
     <ClCompile Include="window_factory\CrossHairWindow.cpp" />
-    <ClCompile Include="d3d_init.cpp" />
+    <ClCompile Include="d3d_backend\d3d12_init.cpp" />
     <ClCompile Include="DebugConsole.cpp" />
     <ClCompile Include="GameHelper.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -204,9 +220,17 @@
     <Image Include="resource\small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\directxtex_desktop_2019.2022.5.10.1\build\native\directxtex_desktop_2019.targets" Condition="Exists('packages\directxtex_desktop_2019.2022.5.10.1\build\native\directxtex_desktop_2019.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\directxtex_desktop_2019.2022.5.10.1\build\native\directxtex_desktop_2019.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtex_desktop_2019.2022.5.10.1\build\native\directxtex_desktop_2019.targets'))" />
+  </Target>
 </Project>

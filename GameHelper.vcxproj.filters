@@ -78,10 +78,28 @@
     <ClInclude Include="window_factory\CrossHairWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="d3d_init.h">
+    <ClInclude Include="window_factory\WindowManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="window_factory\WindowManager.h">
+    <ClInclude Include="DesktopCapture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d_backend\d3d12_init.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d_backend\D3DBase.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="image_loader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d_backend\ImGuiD3D11.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_impl_dx11.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WGC.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -131,13 +149,31 @@
     <ClCompile Include="window_factory\CrossHairWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="d3d_init.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="window_factory\WindowManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="imgui\imgui_demo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DesktopCapture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d_backend\d3d12_init.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d_backend\D3DBase.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="image_loader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="d3d_backend\ImGuiD3D11.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_impl_dx11.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="WGC.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -162,5 +198,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
