@@ -16,10 +16,10 @@
 class ImGuiD3D11 : public D3DBase
 {
 public:
-	ImGuiD3D11(HWND hWnd): D3DBase(hWnd) {}
+	ImGuiD3D11() {}
 	~ImGuiD3D11() {}
 
-	bool Init();
+	bool Init(HWND hWnd);
 	void Destroy();
 
 	bool CreateDeviceD3D();

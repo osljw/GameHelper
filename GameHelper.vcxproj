@@ -24,6 +24,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>GameHelper</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.22000.0</WindowsTargetPlatformVersion>
+    <ProjectName>Fool</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -154,9 +155,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="App.h" />
     <ClInclude Include="d3d_backend\D3DBase.h" />
     <ClInclude Include="d3d_backend\ImGuiD3D11.h" />
     <ClInclude Include="DesktopCapture.h" />
+    <ClInclude Include="include\httplib.h" />
+    <ClInclude Include="window_factory\FoolWindow.h" />
     <ClInclude Include="image_loader.h" />
     <ClInclude Include="imgui\imgui_impl_dx11.h" />
     <ClInclude Include="WGC.h" />
@@ -185,9 +189,11 @@
     <ClInclude Include="window_factory\TrayWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="App.cpp" />
     <ClCompile Include="d3d_backend\D3DBase.cpp" />
     <ClCompile Include="d3d_backend\ImGuiD3D11.cpp" />
     <ClCompile Include="DesktopCapture.cpp" />
+    <ClCompile Include="window_factory\FoolWindow.cpp" />
     <ClCompile Include="image_loader.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
     <ClCompile Include="imgui\imgui_impl_dx11.cpp" />
@@ -221,6 +227,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="proto\record.proto" />
     <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

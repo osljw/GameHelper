@@ -102,6 +102,15 @@
     <ClInclude Include="WGC.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="App.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="window_factory\FoolWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\httplib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameHelper.cpp">
@@ -176,6 +185,12 @@
     <ClCompile Include="WGC.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="window_factory\FoolWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="GameHelper.rc">
@@ -199,5 +214,6 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="packages.config" />
+    <None Include="proto\record.proto" />
   </ItemGroup>
 </Project>

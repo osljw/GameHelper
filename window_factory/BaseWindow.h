@@ -23,6 +23,8 @@ public:
 		return winClassType;
 	}
 
+	
+
 	// 注册窗口类型
 	virtual bool init();
 
@@ -34,6 +36,15 @@ public:
 
 	// 渲染窗口
 	virtual bool render() { return true; };
+
+
+	virtual int run() {
+		init();
+		create();
+		show();
+
+		return 0;
+	}
 
 public:
 	HINSTANCE hInstance;

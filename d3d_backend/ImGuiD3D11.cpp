@@ -9,9 +9,9 @@ IDXGISwapChain* ImGuiD3D11::g_pSwapChain = NULL;
 ID3D11RenderTargetView* ImGuiD3D11::g_mainRenderTargetView = NULL;
 
 
-bool ImGuiD3D11::Init()
+bool ImGuiD3D11::Init(HWND hWnd)
 {
-
+    this->hWnd = hWnd;
     if (!CreateDeviceD3D())
     {
         std::cout << "CreateDeviceD3D failed: " << GetLastError() << std::endl;

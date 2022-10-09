@@ -4,6 +4,7 @@
 //#include "coroutine_test.h"
 
 #include "GameHelper.h"
+#include "App.h"
 #include "Tray.h"
 #include "ResourceManager.h"
 #include "DebugConsole.h"
@@ -15,7 +16,8 @@
 #include "DesktopCapture.h"
 //#include "WindowCapture.h"
 
-#include "d3d_backend/ImGuiD3D11.h"
+
+
 #include "WGC.h"
 
 
@@ -25,24 +27,6 @@
 
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
-
-//winrt::Windows::Foundation::IAsyncOperation<winrt::GraphicsCaptureItem> StartCaptureWithPickerAsync()
-//{
-//    auto item = co_await m_capturePicker.PickSingleItemAsync();
-//    if (item)
-//    {
-//        // We might resume on a different thread, so let's resume execution on the
-//        // main thread. This is important because SimpleCapture uses 
-//        // Direct3D11CaptureFramePool::Create, which requires the existence of
-//        // a DispatcherQueue. See CaptureSnapshot for an example that uses 
-//        // Direct3D11CaptureFramePool::CreateFreeThreaded, which doesn't now have this
-//        // requirement. See the README if you're unsure of which version of 'Create' to use.
-//        co_await m_mainThread;
-//        StartCaptureFromItem(item);
-//    }
-//
-//    co_return item;
-//}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -54,49 +38,40 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     DebugConsole dc(true);
 
-    //std::cout << "caller  Coroutine::test begin, thread: " << std::this_thread::get_id() << std::endl;
-    //std::jthread out;
-    //resuming_on_new_thread(out);
-    //std::cout << "caller  Coroutine::test end, thread: " << std::this_thread::get_id() << std::endl;
-
-    //WCHAR* winclass = ResourceManager::GetString(IDC_GAMEHELPER);
+    App app(hInstance);
 
     //BaseWindow win(hInstance);
-    CrossHairWindow crosshair_win(hInstance);
+    //CrossHairWindow crosshair_win(hInstance);
 
-    bool success;
-    success = crosshair_win.init();
-    if (!success) {
-        std::cout << "window init failed" << std::endl;
-        return -1;
-    }
-    success = crosshair_win.create();
-    if (!success) {
-        std::cout << "window create failed" << std::endl;
-        return -1;
-    }
-    crosshair_win.show();
+    //bool success;
+    //success = crosshair_win.init();
+    //if (!success) {
+    //    std::cout << "window init failed" << std::endl;
+    //    return -1;
+    //}
+    //success = crosshair_win.create();
+    //if (!success) {
+    //    std::cout << "window create failed" << std::endl;
+    //    return -1;
+    //}
+    //crosshair_win.show();
 
-    //BaseWindow win2(hInstance, nCmdShow, IDS_APP_TITLE, IDC_GAMEHELPER);
-    //win2.init();
-    //win2.create(GetSystemMetrics(SM_CXSCREEN) / 2, GetSystemMetrics(SM_CYSCREEN) / 2);
-    //win2.show();
 
-    TrayWindow tray_win(hInstance);
-    success = tray_win.init();
-    if (!success) {
-        std::cout << "TrayWindow init failed" << std::endl;
-        return -1;
-    }
-    success = tray_win.create();
-    if (!success) {
-        std::cout << "TrayWindow create failed" << std::endl;
-        return -1;
-    }
-    tray_win.show();
+    //TrayWindow tray_win(hInstance);
+    //success = tray_win.init();
+    //if (!success) {
+    //    std::cout << "TrayWindow init failed" << std::endl;
+    //    return -1;
+    //}
+    //success = tray_win.create();
+    //if (!success) {
+    //    std::cout << "TrayWindow create failed" << std::endl;
+    //    return -1;
+    //}
+    //tray_win.show();
 
-    WindowManager::RegisterWindow("crosshair", &crosshair_win);
-    WindowManager::RegisterWindow("tray", &tray_win);
+    //WindowManager::RegisterWindow("crosshair", &crosshair_win);
+    //WindowManager::RegisterWindow("tray", &tray_win);
 
 
     //WindowCapture wc(hInstance);
@@ -107,17 +82,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     //HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_GAMEHELPER));
 
     // imgui 绑定到托盘窗口
-    ImGuiD3D11 imgui_manager(tray_win.get_hwnd());
-    imgui_manager.Init();
+    //ImGuiD3D11 imgui_manager(tray_win.get_hwnd());
+    //imgui_manager.Init();
 
-    tray_win.load();
+    //tray_win.load();
 
     std::cout << "main======= thread id: " << std::this_thread::get_id() << std::endl;
 
     //DesktopCapture desk_cap;
-    WGC wgc;
-    HWND src_hWnd = FindWindow(NULL, _T("Steam"));
-    wgc.init(src_hWnd);
+    //WGC wgc;
+    //HWND src_hWnd = FindWindow(NULL, _T("Steam"));
+    //wgc.init(src_hWnd);
 
 
     int count = 0;
@@ -126,8 +101,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     while (!done)
     {
         
-        
-
         // Poll and handle messages (inputs, window resize, etc.)
         // See the WndProc() function below for our to dispatch events to the Win32 backend.
         MSG msg;
@@ -149,29 +122,27 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         //    DispatchMessageW(&msg);
         //}
 
-        imgui_manager.Begin();
+        
 
         count++;
         //if (count % 10000 == 0) wc.take_photo(L"E:\\workspace\\ce\\test.bmp");
 
         //std::cout << "========= imgui_render ========= " << done << std::endl;
 
+        app.Render();
+
         // Start the Dear ImGui frame
-        //imgui_render();
-        //ImguiRender::Begin();
-        
+        //imgui_manager.Begin();
+        //
 
         //tray_win.render();
-        //desk_cap.render();
-        wgc.render();
+        ////desk_cap.render();
+        //wgc.render();
 
-        imgui_manager.End();
-
-        //wgc.d3d11Texture->Release();
-        //if (wgc.d3d11SRV) wgc.d3d11SRV->Release();
+        //imgui_manager.End();
     }
 
-    imgui_manager.Destroy();
+    //imgui_manager.Destroy();
 
 
     return 0;

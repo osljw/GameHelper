@@ -2,8 +2,20 @@
 
 # Todo
 
-- ±àÒëºóÓ¦ÓÃ³ÌĞòÎÄ¼şµÄÍ¼±ê
-- taskbarÍ¼±ê
-	- taskbarÉÏÏÔÊ¾µÄÍ¼±ê
-	- taskbarÉÏÊó±êĞüÍ£Ô¤ÀÀ´°¿Ú×óÉÏ½ÇÍ¼±ê
-		- ÓÉWNDCLASSEXWÖĞµÄhIcon½øĞĞ¿ØÖÆ£¬ imguiµÄ´°¿ÚÀàĞÍÔÚplatformÏà¹Ø´úÂëÖĞÉèÖÃ
+- ç¼–è¯‘ååº”ç”¨ç¨‹åºæ–‡ä»¶çš„å›¾æ ‡
+- taskbarå›¾æ ‡
+	- taskbarä¸Šæ˜¾ç¤ºçš„å›¾æ ‡
+	- taskbarä¸Šé¼ æ ‡æ‚¬åœé¢„è§ˆçª—å£å·¦ä¸Šè§’å›¾æ ‡
+		- ç”±WNDCLASSEXWä¸­çš„hIconè¿›è¡Œæ§åˆ¶ï¼Œ imguiçš„çª—å£ç±»å‹åœ¨platformç›¸å…³ä»£ç ä¸­è®¾ç½®
+
+
+# proto ç¼–è¯‘
+1. nugetåŒ…ç®¡ç†å®‰è£…grpc tools
+2. ç¼–è¯‘protoæ–‡ä»¶
+```
+
+./packages/Grpc.Tools.2.49.1/tools/windows_x64/protoc.exe --cpp_out=proto -Iproto record.proto
+
+
+python -m grpc_tools.protoc --python_out=python --grpc_python_out=python -I. proto/record.proto
+```

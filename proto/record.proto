@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package record;
+
+// The greeting service definition.
+service Record {
+  // Sends a greeting
+  rpc Start (RecordRequest) returns (RecordReply) {}
+  rpc Stop (RecordRequest) returns (RecordReply) {}
+}
+
+// The request message containing the user's name.
+message RecordRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings
+message RecordReply {
+  string message = 1;
+}

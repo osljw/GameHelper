@@ -74,15 +74,15 @@ bool WGC::init(HWND hwnd) {
             ABI::Windows::System::IDispatcherQueueController**>(winrt::put_abi(controller))
         )
     );
-    queue = controller.DispatcherQueue();
-    std::cout << "DispatcherQueue create" << std::endl;
+    //queue = controller.DispatcherQueue();
+    //std::cout << "DispatcherQueue create" << std::endl;
 
-    // Enqueue our capture work on the dispatcher
-    auto success = queue.TryEnqueue([=]() -> void
-        {
-            //g_app->Initialize(root);
-        });
-    WINRT_VERIFY(success);
+    //// Enqueue our capture work on the dispatcher
+    //auto success = queue.TryEnqueue([=]() -> void
+    //    {
+    //        //g_app->Initialize(root);
+    //    });
+    //WINRT_VERIFY(success);
 
     // ======================== create GraphicsCaptureItem ==================================
     auto activation_factory = winrt::get_activation_factory<

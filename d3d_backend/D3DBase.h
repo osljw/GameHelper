@@ -4,7 +4,7 @@
 class D3DBase
 {
 public:
-	D3DBase(HWND hWnd) : hWnd(hWnd) {}
+	D3DBase() {}
 	virtual ~D3DBase() {}
 
 	virtual bool CreateDeviceD3D() = 0;
