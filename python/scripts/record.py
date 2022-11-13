@@ -40,6 +40,9 @@ start_time = datetime.datetime.now()
 def start_record():
     global mr, kr, start_time
 
+    mouse_data.clear()
+    keyboard_data.clear()
+
     if mr.listener.is_alive():
         mr.stop()
     if kr.listener.is_alive():
@@ -62,7 +65,8 @@ def stop_record():
 
     mr.stop()
     kr.stop()
-    return jsonify({'result': 'stop success'})
+
+    return jsonify({'result': 'stop success', 'data': keyboard_data})
 
 
 

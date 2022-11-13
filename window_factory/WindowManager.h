@@ -1,5 +1,5 @@
 #pragma once
-#include "../GameHelper.h"
+#include "../Fool.h"
 #include "BaseWindow.h"
 
 #include <unordered_map>

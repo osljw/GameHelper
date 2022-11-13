@@ -19,3 +19,10 @@
 
 python -m grpc_tools.protoc --python_out=python --grpc_python_out=python -I. proto/record.proto
 ```
+
+# 运行
+
+
+```
+python python/main.py record
+```

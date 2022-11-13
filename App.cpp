@@ -11,14 +11,11 @@ App::App(HINSTANCE hInstance)
 	// init imgui on main window hwnd
 	imgui_manager.Init(main_window.get_hwnd());
 
+	windows.push_back(std::make_shared<FoolWindow>());
 
-
-	//windows.push_back(std::make_shared<CrossHairWindow>(hInstance));
-	windows.push_back(std::make_shared<FoolWindow>(hInstance));
-
-	for (auto window : windows) {
-		window->run();
-	}
+	//for (auto window : windows) {
+	//	window->run();
+	//}
 }
 
 void App::Render()

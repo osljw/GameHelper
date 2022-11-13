@@ -3,7 +3,7 @@
 
 //#include "coroutine_test.h"
 
-#include "GameHelper.h"
+#include "Fool.h"
 #include "App.h"
 #include "Tray.h"
 #include "ResourceManager.h"
@@ -106,14 +106,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         MSG msg;
         while (::PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
         {
-            //std::cout << "all ======== msg: " << msg.message << ", " << std::hex << msg.message << std::endl;
+            //std::cout << "msg hwnd=" << std::hex << msg.hwnd 
+            //    << ", message: " << std::dec << msg.message << ", hex: " << std::hex << msg.message 
+            //    << ", wparam: " << msg.wParam
+            //    << ", lparam: " << msg.lParam
+            //    << std::endl;
             ::TranslateMessage(&msg);
             ::DispatchMessage(&msg);
             if (msg.message == WM_QUIT)
                 done = true;
         }
-        if (done)
-            break;
+
 
         //MSG msg = {};
         //while (GetMessageW(&msg, nullptr, 0, 0))
@@ -140,6 +143,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         //wgc.render();
 
         //imgui_manager.End();
+
+        if (done)
+            break;
     }
 
     //imgui_manager.Destroy();

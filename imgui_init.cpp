@@ -1,5 +1,5 @@
 #include "imgui_init.h"
-#include "GameHelper.h"
+//#include "Fool.h"
 #include "imgui/imgui_impl_win32.h"
 
 bool ImguiInit::imgui_init() {

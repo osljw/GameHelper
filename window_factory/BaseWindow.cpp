@@ -243,7 +243,7 @@ bool BaseWindow::init() {
     wcex.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_TRAY));
     wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
     //wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-    wcex.hbrBackground = 0;
+    wcex.hbrBackground = 0; // Í¸Ã÷´°¿Ú
     //wcex.lpszMenuName   = MAKEINTRESOURCEW(IDC_GAMEHELPER);
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = winClassType.c_str();
@@ -266,7 +266,8 @@ bool BaseWindow::init() {
 bool BaseWindow::create() {
 
     hWnd = CreateWindowEx(
-        WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE,
+        //WS_EX_TOPMOST | WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE,
+        WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE,
         winClassType.c_str(),
         NULL,
         WS_POPUP,
